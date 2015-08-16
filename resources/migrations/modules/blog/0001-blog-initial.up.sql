@@ -63,7 +63,7 @@ CREATE TABLE blog_post_categories (
        category_id integer not null references blog_category(id)
 );
 
-CREATE TABLE blog_post_history_categories (
+CREATE TABLE blog_post_categories_history (
        history_id integer not null references blog_post_history(id),
        category_id integer not null references blog_category(id)
 );

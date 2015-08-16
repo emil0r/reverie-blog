@@ -54,7 +54,7 @@ INSERT INTO blog_post_history
                 id = :id;
 
 --name: sql-blog-add-post-categories-history!
-INSERT INTO blog_post_history_categories (category_id, history_id)
+INSERT INTO blog_post_categories_history (category_id, history_id)
        SELECT category_id, :history_id AS history_id
        FROM blog_post_categories
        WHERE blog_id = :id;

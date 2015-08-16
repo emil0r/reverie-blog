@@ -7,14 +7,18 @@
 
 (defqueries "queries/blog/blog-queries.sql")
 
-(defn published?-fn [module entity id]
+(defn published?-fn
+  "Is the post published?"
+  [module entity id]
   (->> {:select [:%count.*]
         :from [:blog_post]
         :where [:= :id id]}
        (db/query (:database module))
        first :count zero? false?))
 
-(defn- shift-version [module entity id]
+(defn- shift-version
+  "Shift public version into the history tables"
+  [module entity id]
   (let [db (:database module)
         history-id (->> (db/query db
                                   sql-blog-add-post-history<!
@@ -25,7 +29,9 @@
               {:history_id history-id
                :id id})))
 
-(defn publish-fn [module entity id]
+(defn publish-fn
+  "Publish draft to post while keeping history"
+  [module entity id]
   (let [db (:database module)
         published? #spy/t (published?-fn module entity id)]
     (if published?
@@ -40,7 +46,9 @@
     ;; add new
     (db/query db sql-blog-add-post-categories! {:id id})))
 
-(defn unpublish-fn [module entity id]
+(defn unpublish-fn
+  "Shift version and then delete post"
+  [module entity id]
   (let [db (:database module)]
     (shift-version module entity id)
     (db/query! db {:delete-from :blog_post_categories
@@ -48,7 +56,23 @@
     (db/query! db {:delete-from :blog_post
                    :where [:= :id id]})))
 
-(defn delete-fn [module entity id])
+(defn delete-fn
+  "Delete public post and history"
+  [module entity id]
+  (let [db (:database module)
+        history-ids (->> {:select [:id]
+                          :from [:blog_post_history]
+                          :where [:= :draft_id id]}
+                         (db/query db)
+                         (map :id))]
+    (db/query! db {:delete-from :blog_post_categories_history
+                   :where [:in :history_id history-ids]})
+    (db/query! db {:delete-from :blog_post_categories
+                   :where [:= :blog_id id]})
+    (db/query! db {:delete-from :blog_post
+                   :where [:= :id id]})
+    (db/query! db {:delete-from :blog_post_history
+                   :where [:= :draft_id id]})))
 
 (defn get-authors [{db :database initial :initial}]
   (->> (db/query db {:select [:id :full_name]
