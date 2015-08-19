@@ -5,7 +5,7 @@
             [yesql.core :refer [defqueries]]
             vlad))
 
-(defqueries "queries/blog/blog-queries.sql")
+(defqueries "queries/blog/module-queries.sql")
 
 (defn published?-fn
   "Is the post published?"
