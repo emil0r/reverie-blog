@@ -65,8 +65,9 @@
                           :where [:= :draft_id id]}
                          (db/query db)
                          (map :id))]
-    (db/query! db {:delete-from :blog_post_categories_history
-                   :where [:in :history_id history-ids]})
+    (when-not (empty? history-ids)
+      (db/query! db {:delete-from :blog_post_categories_history
+                     :where [:in :history_id history-ids]}))
     (db/query! db {:delete-from :blog_post_categories
                    :where [:= :blog_id id]})
     (db/query! db {:delete-from :blog_post
