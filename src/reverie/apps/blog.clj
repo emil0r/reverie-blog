@@ -23,6 +23,10 @@
 
 (defqueries "queries/blog/app-queries.sql")
 
+(defn category-link [page category]
+  [:li [:a {:href (str (page/path page) "?category=" category)}
+        category]])
+
 (defn list-categories [page db params]
   [:ul.categories
    [:li [:h4 "Categories"]]
@@ -54,33 +58,40 @@
    [:div.footer
     [:a.btn.btn-primary.read-more {:href (join-uri (page/path page) slug)} "Read more"]]])
 
-(defn list-entries [page db offset limit]
-  (map (partial list-entry page)
-       (db/query db sql-list-entries {:offset offset :limit limit})))
+(defn list-entries
+  ([page db offset limit]
+     (map (partial list-entry page)
+          (db/query db sql-list-entries {:offset offset :limit limit})))
+  ([page db category offset limit]
+     (map (partial list-entry page)
+          (db/query db sql-list-entries {:category category
+                                         :offset offset
+                                         :limit limit}))))
 
 (defn pagination
-  ([page db pp]
-     (pagination page db pp 1))
-  ([-page db pp offset]
+  ([rev-page db pp]
+     (pagination rev-page db pp 1))
+  ([rev-page db pp offset]
      (let [num-pages (->> sql-count-entries
                           (db/query db)
                           first :count)
-           {:keys [page pages next prev]} (paginator/paginate num-pages pp offset)]
+           {:keys [page pages next prev]} #spy/t (paginator/paginate num-pages pp offset)]
        [:ul.pagination
         [:li
          (if (nil? prev)
-           page
-           [:a {:href (join-uri (page/path -page) prev)}
-            prev])]
+           "previous"
+           [:a {:href (join-uri (page/path rev-page) (str prev))}
+            "previous"])]
         [:li (format "%d of %d" page pages)]
         [:li
          (if (nil? next)
-           page
-           [:a {:href (join-uri (page/path -page) next)}
-            next])]])))
+           "next"
+           [:a {:href (join-uri (page/path rev-page) (str next))}
+            "next"])]])))
 
 (defn view-entry [page db {:keys [title slug post created category author
-                                  og_description og_image og_title]
+                                  og_description og_image og_title
+                                  categories]
                            :as post}]
   (downstream/assoc! :blog/title (first (remove str/blank? [og_title title])))
   (downstream/assoc! :blog.og/description og_description)
@@ -94,31 +105,34 @@
 
    [:div.header
     [:div.date (time/format created "dd MMM, YYYY")]
-    [:div.author "by " author]]
+    [:div.author "by " author]
+    [:ul.categories (map (partial category-link page) categories)]]
 
    [:div.body post]
    [:div.comments
     (get-comments @commentator page db post)]])
 
-(defn index [request page properties {:keys [offset] :as params}]
+(defn index [request page properties {:keys [offset category] :as params}]
   (let [db (get-in request [:reverie :database])
         pp 20
-        offset (* (- (or offset 1) 1) pp)]
+        db-offset (* (- (or offset 1) 1) pp)]
     {:latest (list-latest page db)
      :categories (list-categories page db params)
-     :entries (list-entries page db offset pp)
-     :pagination (pagination page db pp)}))
+     :entries (if (str/blank? category)
+                (list-entries page db db-offset pp)
+                (list-entries page db category db-offset pp))
+     :pagination (pagination page db pp offset)}))
 
 (defn post [request page properties {:keys [slug] :as params}]
   (let [db (get-in request [:reverie :database])]
     {:latest (list-latest page db)
      :categories (list-categories page db params)
-     :entry (view-entry page db (->> (db/query db sql-get-entry)
-                                     {:slug slug}
+     :entry (view-entry page db (->> {:slug slug}
+                                     (db/query db sql-get-entry)
                                      first))}))
 
 (defapp reverie-blog
   {}
   [["/" {:any index}]
-   ["/:offset" {:offset #"^\d+$"} {:offset Integer} {:any index}]
+   ["/:offset" {:offset #"\d+$"} {:offset Integer} {:any index}]
    ["/:slug" {:any post}]])
