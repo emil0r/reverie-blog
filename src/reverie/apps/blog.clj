@@ -12,7 +12,7 @@
             [yesql.core :refer [defqueries]]))
 
 
-(def commentator (atom nil))
+(defonce blogger (atom nil))
 
 (defprotocol IReverieBlogComments
   (get-comments [commentator page db post]))
@@ -102,16 +102,16 @@
    (if-not (str/blank? og_image)
      [:img {:src og_image
             :alt title
-            :class (downstream/get :blog.og.image/class)}])
+            :class (str "og-image " (get-in @blogger [:image :class]))}])
 
    [:div.header
     [:div.date (time/format created "dd MMM, YYYY")]
-    [:div.author "by " author]
+    [:div.author "by " [:span author]]
     [:ul.categories (map (partial category-link page) categories)]]
 
    [:div.body post]
    [:div.comments
-    (get-comments @commentator page db post)]])
+    (get-comments (get-in @blogger [:commentator]) page db post)]])
 
 (defn index [request page properties {:keys [offset category] :as params}]
   (let [db (get-in request [:reverie :database])

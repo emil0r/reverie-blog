@@ -32,8 +32,8 @@ CREATE TABLE blog_post (
        post text not null default '',
        discussion_p boolean not null default true,
        author_id integer not null references auth_user(id),
-       created timestamp without time zone not null default now(),
-       updated timestamp without time zone null
+       created timestamp with time zone not null default now(),
+       updated timestamp with time zone null
 );
 
 CREATE TABLE blog_post_history (
@@ -48,9 +48,9 @@ CREATE TABLE blog_post_history (
        post text not null default '',
        discussion_p boolean not null default true,
        author_id integer not null references auth_user(id),
-       created timestamp without time zone not null default now(),
-       updated timestamp without time zone null,
-       archived timestamp without time zone not null default now()
+       created timestamp with time zone not null default now(),
+       updated timestamp with time zone null,
+       archived timestamp with time zone not null default now()
 );
 
 CREATE TABLE blog_draft_categories (
