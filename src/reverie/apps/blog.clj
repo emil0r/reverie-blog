@@ -93,7 +93,8 @@
                                   og_description og_image og_title
                                   categories]
                            :as post}]
-  (downstream/assoc! :blog/title (first (remove str/blank? [og_title title])))
+  (downstream/assoc! :blog/title title)
+  (downstream/assoc! :blog.og/title og_title)
   (downstream/assoc! :blog.og/description og_description)
   (downstream/assoc! :blog.og/image og_image)
   [:div.post
