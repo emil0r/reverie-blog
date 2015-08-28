@@ -33,7 +33,7 @@
   "Publish draft to post while keeping history"
   [module entity id]
   (let [db (:database module)
-        published? #spy/t (published?-fn module entity id)]
+        published? (published?-fn module entity id)]
     (if published?
       ;; if the entity has been published -> version the entity
       (do (shift-version module entity id)

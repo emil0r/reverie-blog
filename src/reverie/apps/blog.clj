@@ -75,7 +75,7 @@
      (let [num-pages (->> sql-count-entries
                           (db/query db)
                           first :count)
-           {:keys [page pages next prev]} #spy/t (paginator/paginate num-pages pp offset)]
+           {:keys [page pages next prev]} (paginator/paginate num-pages pp offset)]
        [:ul.pagination
         [:li
          (if (nil? prev)
