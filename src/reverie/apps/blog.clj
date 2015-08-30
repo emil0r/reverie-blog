@@ -98,6 +98,11 @@
   (downstream/assoc! :blog.og/description og_description)
   (downstream/assoc! :blog.og/image og_image)
   [:div.post
+   (if-not (str/blank? og_image)
+     [:img {:src og_image
+            :alt title
+            :class (str "og-image " (get-in @blogger [:image :class]))}])
+
    [:h1 title]
 
    [:div.header
@@ -105,12 +110,8 @@
     [:div.author "by " [:span author]]
     [:ul.categories (map (partial category-link page) categories)]]
 
-   (if-not (str/blank? og_image)
-     [:img {:src og_image
-            :alt title
-            :class (str "og-image " (get-in @blogger [:image :class]))}])
-
    [:div.body post]
+
    [:div.comments
     (get-comments (get-in @blogger [:commentator]) page db post)]])
 
