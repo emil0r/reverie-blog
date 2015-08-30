@@ -99,15 +99,16 @@
   (downstream/assoc! :blog.og/image og_image)
   [:div.post
    [:h1 title]
-   (if-not (str/blank? og_image)
-     [:img {:src og_image
-            :alt title
-            :class (str "og-image " (get-in @blogger [:image :class]))}])
 
    [:div.header
     [:div.date (time/format created "dd MMM, YYYY")]
     [:div.author "by " [:span author]]
     [:ul.categories (map (partial category-link page) categories)]]
+
+   (if-not (str/blank? og_image)
+     [:img {:src og_image
+            :alt title
+            :class (str "og-image " (get-in @blogger [:image :class]))}])
 
    [:div.body post]
    [:div.comments
