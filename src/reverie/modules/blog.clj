@@ -1,7 +1,7 @@
 (ns reverie.modules.blog
-  (:require [reverie.auth :as auth]
+  (:require [ez-database.core :as db]
+            [reverie.auth :as auth]
             [reverie.core :refer [defmodule]]
-            [reverie.database :as db]
             [yesql.core :refer [defqueries]]
             vlad))
 

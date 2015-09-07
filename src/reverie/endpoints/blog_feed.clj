@@ -4,8 +4,8 @@
             [clj-time.core :as t]
             [clj-time.format :as f]
             [clj-uuid :as uuid]
+            [ez-database.core :as db]
             [reverie.core :refer [defpage]]
-            [reverie.database :as db]
             [reverie.time :as time]
             [yesql.core :refer [defqueries]]))
 

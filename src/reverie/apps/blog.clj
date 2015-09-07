@@ -1,11 +1,11 @@
 (ns reverie.apps.blog
   (:require [clj-time.core :as t]
             [clojure.string :as str]
+            [ez-database.core :as db]
             [ez-web.uri :refer [join-uri]]
             [ez-web.paginator :as paginator]
             [reverie.core :refer [defapp]]
             [reverie.cache :as cache]
-            [reverie.database :as db]
             [reverie.downstream :as downstream]
             [reverie.page :as page]
             [reverie.time :as time]

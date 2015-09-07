@@ -24,7 +24,7 @@ FROM
 GROUP BY
       p.id, u.full_name
 ORDER BY
-      p.created
+      p.created DESC
 OFFSET
        :offset
 LIMIT
@@ -48,7 +48,7 @@ WHERE
 GROUP BY
       p.id, u.full_name
 ORDER BY
-      p.created
+      p.created DESC
 OFFSET
        :offset
 LIMIT
