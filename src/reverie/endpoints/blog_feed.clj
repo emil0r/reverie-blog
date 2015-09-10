@@ -29,9 +29,7 @@
 (defn get-entry [blog-url {:keys [id title slug og_title og_description created updated author author_email]}]
   [:entry
    [:title (first (remove str/blank? [title og_title]))]
-   [:link {:rel "alternate"
-           :type "text/html"
-           :link (str blog-url slug)}]
+   [:link {:link (str blog-url slug)}]
    [:id (get-id-tag id)]
    [:updated (f/unparse (f/formatters :date-time) updated)]
    [:published (f/unparse (f/formatters :date-time) created)]
