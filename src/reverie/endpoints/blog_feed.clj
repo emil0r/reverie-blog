@@ -30,7 +30,8 @@
 (defn get-entry [blog-url {:keys [id title slug og_title og_description created updated author author_email]}]
   [:entry
    [:link {:href (str blog-url slug)
-           :rel "self"}]
+           :type "text/html"
+           :rel "alternate"}]
    [:title (first (remove str/blank? [title og_title]))]
    [:id (get-id-tag id)]
    [:updated (f/unparse (f/formatters :date-time) updated)]
@@ -55,8 +56,8 @@
       (if updated
         [:updated updated])
       [:rights rights]
-      [:link {:href url}]
-      [:link {:rel "self"
+      [:link {:href (str url "/atom.feed")}]
+      [:link {:rel "alternate"
               :type "text/html"
               :href blog-url}]
       [:generator {:uri "https://github.com/emil0r/reverie-blog"
