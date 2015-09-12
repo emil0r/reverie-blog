@@ -17,19 +17,21 @@
                              :subtitle "reverie blog / subtitle"
                              :id-key nil
                              :url "fill-me-in"
+                             :tagging-entity "reveriecms.org,2015-09-12"
                              :blog-url "fill-me-in"
                              :rights ""
                              :generator "reverie/blog"}))
 
 (defn get-id-tag [id]
-  (format "tag:%s,%s"
-          (get-in @feed-content [:url])
+  (format "tag:%s:%s"
+          (get-in @feed-content [:tagging-entity])
           (uuid/v5 (get-in @feed-content [:id-key]) id)))
 
 (defn get-entry [blog-url {:keys [id title slug og_title og_description created updated author author_email]}]
   [:entry
+   [:link {:href (str blog-url slug)
+           :rel "self"}]
    [:title (first (remove str/blank? [title og_title]))]
-   [:link {:link (str blog-url slug)}]
    [:id (get-id-tag id)]
    [:updated (f/unparse (f/formatters :date-time) updated)]
    [:published (f/unparse (f/formatters :date-time) created)]
@@ -53,12 +55,10 @@
       (if updated
         [:updated updated])
       [:rights rights]
-      [:link {:rel "alternate"
-              :type "text/html"
-              :href url}]
+      [:link {:href url}]
       [:link {:rel "self"
-              :type "application/atom+xml"
-              :href (str url "/feed.atom")}]
+              :type "text/html"
+              :href blog-url}]
       [:generator {:uri "https://github.com/emil0r/reverie-blog"
                    :version "1.0"}
        generator]
