@@ -94,6 +94,7 @@
                                   categories]
                            :as post}]
   (downstream/assoc! :blog/title title)
+  (downstream/assoc! :blog/slug slug)
   (downstream/assoc! :blog.og/title og_title)
   (downstream/assoc! :blog.og/description og_description)
   (downstream/assoc! :blog.og/image og_image)
