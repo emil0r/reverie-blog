@@ -1,0 +1,29 @@
+{:dictionary
+ {:en
+  {:reverie {:blog {:categories "Categories"
+                    :all-categories "all"
+                    :latest "Latest"
+                    :by-author "by "
+                    :date-fmt "dd MMM, YYYY"
+                    :read-more "Read more"
+                    :pagination {:next "next"
+                                 :previous "previous"
+                                 :x-of-n "%d of %d"}}}}
+  :sv
+  {:reverie {:blog {:categories "Kategorier"
+                    :all-categories "alla"
+                    :latest "Senaste"
+                    :by-author "av "
+                    :date-fmt "dd MMM, YYYY"
+                    :read-more "Läs mer"
+                    :pagination {:next "nästa"
+                                 :previous "tillbaka"}}}}
+  :no
+  {:reverie {:blog {:categories "Kategorier"
+                    :all-categories "alle"
+                    :latest "Nyeste"
+                    :by-author "av "
+                    :date-fmt "dd MMM, YYYY"
+                    :read-more "Les mer"
+                    :pagination {:next "nesta"
+                                 :previous "forrige"}}}}}}

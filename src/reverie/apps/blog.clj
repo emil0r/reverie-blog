@@ -7,6 +7,7 @@
             [reverie.core :refer [defapp]]
             [reverie.cache :as cache]
             [reverie.downstream :as downstream]
+            [reverie.i18n :refer [t]]
             [reverie.page :as page]
             [reverie.time :as time]
             [yesql.core :refer [defqueries]]))
@@ -29,10 +30,10 @@
 
 (defn list-categories [page db params]
   [:ul.categories
-   [:li [:h4 "Categories"]]
+   [:li [:h4 (t :reverie.blog/categories)]]
    [:li (if-not (contains? params :category)
           {:class :active})
-    [:a {:href (page/path page)} "all"]]
+    [:a {:href (page/path page)} (t :reverie.blog/all-categories)]]
    (for [{:keys [name]} (db/query db sql-list-categories)]
      [:li (if (= (:category params) name)
             {:class :active})
@@ -42,7 +43,7 @@
 (defn list-latest [page db]
   (let [entries (db/query db sql-list-latest {:limit 5})]
     [:ul.latest
-     [:li [:h4 "Latest"]]
+     [:li [:h4 (t :reverie.blog/latest)]]
      (map (fn [{:keys [title slug]}]
             [:li [:a {:href (join-uri (page/path page) slug)} title]])
           entries)]))
@@ -52,11 +53,11 @@
   [:div.post.listing
    [:h2 [:a {:href (join-uri (page/path page) slug)} title]]
    [:div.header
-    [:div.date (time/format created "dd MMM, YYYY")]
-    [:div.author "by " author]]
+    [:div.date (time/format created (t :reverie.blog/date-fmt))]
+    [:div.author (t :reverie.blog/by-author) author]]
    [:div.body ingress]
    [:div.footer
-    [:a.btn.btn-primary.read-more {:href (join-uri (page/path page) slug)} "Read more"]]])
+    [:a.btn.btn-primary.read-more {:href (join-uri (page/path page) slug)} (t :reverie.blog/read-more)]]])
 
 (defn list-entries
   ([page db offset limit]
@@ -79,15 +80,15 @@
        [:ul.pagination
         [:li
          (if (nil? prev)
-           "previous"
+           (t :reverie.blog.pagination/previous)
            [:a {:href (join-uri (page/path rev-page) (str prev))}
-            "previous"])]
-        [:li (format "%d of %d" page pages)]
+            (t :reverie.blog.pagination/previous)])]
+        [:li (t :reverie.blog.pagination/x-of-n page pages)]
         [:li
          (if (nil? next)
-           "next"
+           (t :reverie.blog.pagination/next)
            [:a {:href (join-uri (page/path rev-page) (str next))}
-            "next"])]])))
+            (t :reverie.blog.pagination/next)])]])))
 
 (defn view-entry [page db {:keys [title slug post created category author
                                   og_description og_image og_title
@@ -107,8 +108,8 @@
    [:h1 title]
 
    [:div.header
-    [:div.date (time/format created "dd MMM, YYYY")]
-    [:div.author "by " [:span author]]
+    [:div.date (time/format created (t :reverie.blog/date-fmt))]
+    [:div.author (t :reverie.blog/by-author) [:span author]]
     [:ul.categories (map (partial category-link page) categories)]]
 
    [:div.body post]
@@ -136,7 +137,7 @@
                                      first))}))
 
 (defapp reverie-blog
-  {}
+  {:i18n "i18n/blog/tconfig.edn"}
   [["/" {:any index}]
    ["/:offset" {:offset #"\d+$"} {:offset Integer} {:any index}]
    ["/:slug" {:any post}]])
