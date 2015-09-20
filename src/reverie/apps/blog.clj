@@ -110,7 +110,9 @@
    [:div.header
     [:div.date (time/format created (t :reverie.blog/date-fmt))]
     [:div.author (t :reverie.blog/by-author) [:span author]]
-    [:ul.categories (map (partial category-link page) categories)]]
+    [:ul.categories
+     [:li.categories (t :reverie.blog/categories)]
+     (map (partial category-link page) categories)]]
 
    [:div.body post]
 

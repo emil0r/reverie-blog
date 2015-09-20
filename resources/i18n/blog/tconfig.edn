@@ -3,7 +3,7 @@
   {:reverie {:blog {:categories "Categories"
                     :all-categories "all"
                     :latest "Latest"
-                    :by-author "by "
+                    :by-author "Posted by "
                     :date-fmt "dd MMM, YYYY"
                     :read-more "Read more"
                     :pagination {:next "next"
@@ -13,17 +13,19 @@
   {:reverie {:blog {:categories "Kategorier"
                     :all-categories "alla"
                     :latest "Senaste"
-                    :by-author "av "
+                    :by-author "Upplagd av "
                     :date-fmt "dd MMM, YYYY"
                     :read-more "Läs mer"
                     :pagination {:next "nästa"
-                                 :previous "tillbaka"}}}}
+                                 :previous "tillbaka"
+                                 :x-of-n "%d av %d"}}}}
   :no
   {:reverie {:blog {:categories "Kategorier"
                     :all-categories "alle"
                     :latest "Nyeste"
-                    :by-author "av "
+                    :by-author "Skrevet av "
                     :date-fmt "dd MMM, YYYY"
                     :read-more "Les mer"
                     :pagination {:next "nesta"
-                                 :previous "forrige"}}}}}}
+                                 :previous "forrige"
+                                 :x-of-n "%d av %d"}}}}}}
