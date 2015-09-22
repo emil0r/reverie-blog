@@ -57,7 +57,8 @@
     [:div.author (t :reverie.blog/by-author) author]]
    [:div.body ingress]
    [:div.footer
-    [:a.btn.btn-primary.read-more {:href (join-uri (page/path page) slug)} (t :reverie.blog/read-more)]]])
+    [:a {:class (get-in @blogger [:css :read-more] :read-more)
+         :href (join-uri (page/path page) slug)} (t :reverie.blog/read-more)]]])
 
 (defn list-entries
   ([page db offset limit]
@@ -103,7 +104,7 @@
    (if-not (str/blank? og_image)
      [:img {:src og_image
             :alt title
-            :class (str "og-image " (get-in @blogger [:image :class]))}])
+            :class (get-in @blogger [:css :image])}])
 
    [:h1 title]
 
