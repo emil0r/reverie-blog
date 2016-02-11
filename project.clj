@@ -1,4 +1,4 @@
-(defproject reverie-blog "0.2.0-SNAPSHOT"
+(defproject reverie-blog "0.2.0"
   :description "Blog engine for reverie/CMS"
   :url "https://github.com/emil0r/reverie-blog"
   :license {:name "Eclipse Public License"
@@ -6,4 +6,4 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/data.xml "0.0.8"]
                  [danlentz/clj-uuid "0.1.6"]
-                 [reverie-core "0.7.0-SNAPSHOT"]])
+                 [reverie-core "0.7.0-alpha1"]])
