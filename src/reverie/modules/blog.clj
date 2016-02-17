@@ -3,7 +3,7 @@
             [reverie.auth :as auth]
             [reverie.core :refer [defmodule]]
             [yesql.core :refer [defqueries]]
-            vlad))
+            [vlad.core :as vlad]))
 
 (defqueries "queries/blog/module-queries.sql")
 
@@ -99,7 +99,7 @@
                :display [:name]
                :fields {:name {:name "Name"
                                :type :text
-                               :validation (vlad/present [:name])}}
+                               :validation (vlad/attr [:name] (vlad/present))}}
                :sections [{:fields [:name]}]}
     :post {:name "Blog post"
            :order :id
@@ -112,20 +112,20 @@
            :display [:title]
            :fields {:title {:name "Title"
                             :type :text
-                            :validation (vlad/present [:title])}
+                            :validation (vlad/attr [:title] (vlad/present))}
                     :slug {:name "Slug"
                            :type :slug
                            :for :title
-                           :validation (vlad/present [:slug])}
+                           :validation (vlad/attr [:slug] (vlad/present))}
                     :ingress {:name "Ingress"
                               :type :richtext
                               :inline? true
-                              :validation (vlad/present [:ingress])
+                              :validation (vlad/attr [:ingress] (vlad/present))
                               :help "Ingress is what will show up in the blog listings and is supposed to be a a short summary of the entire blog post"}
                     :post {:name "Post"
                            :type :richtext
                            :inline? true
-                           :validation (vlad/present [:post])
+                           :validation (vlad/attr [:post] (vlad/present))
                            :help "Post is the main body of the blog post. This is where the entire post goes"}
                     :discussion_p {:name "Discussion?"
                                    :type :boolean
@@ -152,6 +152,6 @@
                                 :type :dropdown
                                 :cast :int
                                 :options get-authors
-                                :validation (vlad/present [:author_id])}}
+                                :validation (vlad/attr [:author_id] (vlad/present))}}
            :sections [{:fields [:title :slug :ingress :post :categories :author_id]}
                       {:name "Meta" :fields [:discussion_p :og_title :og_image :og_description]}]}}})
