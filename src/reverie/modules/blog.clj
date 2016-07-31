@@ -94,22 +94,28 @@
    :template :admin/main
    :entities
    {:category {:name "Category"
-               :order :id
                :table :blog_category
-               :display [:name]
+               :interface {:display {:name {:name "Name"
+                                            :link? true
+                                            :sort :n
+                                            :sort-name :id}}
+                           :default-order :id}
                :fields {:name {:name "Name"
                                :type :text
                                :validation (vlad/attr [:name] (vlad/present))}}
                :sections [{:fields [:name]}]}
     :post {:name "Blog post"
-           :order :id
            :table :blog_draft
+           :interface {:display {:title {:name "Title"
+                                         :link? true
+                                         :sort :t
+                                         :sort-name :id}}
+                       :default-order :id}
            :publishing {:publish? true
                         :publish-fn publish-fn
                         :unpublish-fn unpublish-fn
                         :delete-fn delete-fn
                         :published?-fn published?-fn}
-           :display [:title]
            :fields {:title {:name "Title"
                             :type :text
                             :validation (vlad/attr [:title] (vlad/present))}
