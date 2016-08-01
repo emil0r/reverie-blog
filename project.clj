@@ -1,4 +1,4 @@
-(defproject reverie-blog "0.2.2-SNAPSHOT"
+(defproject reverie-blog "0.2.2"
   :description "Blog engine for reverie/CMS"
   :url "https://github.com/emil0r/reverie-blog"
   :license {:name "Eclipse Public License"
