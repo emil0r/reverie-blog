@@ -18,6 +18,7 @@ UPDATE blog_post SET
        post = draft.post,
        discussion_p = draft.discussion_p,
        author_id = draft.author_id,
+       source = draft.source,
        updated = now()
 FROM
        (SELECT
@@ -40,13 +41,13 @@ INSERT INTO blog_post_categories (category_id, blog_id)
 INSERT INTO blog_post_history
             (draft_id, og_image, og_title, og_description,
              title, slug, ingress, post,
-             discussion_p, author_id,
+             discussion_p, author_id, source,
              created, updated)
        SELECT
                 id AS draft_id,
                 og_image, og_title, og_description,
                 title, slug, ingress, post,
-                discussion_p, author_id,
+                discussion_p, author_id, source,
                 created, updated
        FROM
                 blog_post

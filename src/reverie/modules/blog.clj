@@ -158,6 +158,10 @@
                                 :type :dropdown
                                 :cast :int
                                 :options get-authors
-                                :validation (vlad/attr [:author_id] (vlad/present))}}
-           :sections [{:fields [:title :slug :ingress :post :categories :author_id]}
+                                :validation (vlad/attr [:author_id] (vlad/present))}
+                    :source {:name "Source"
+                             :type :text
+                             :initial ""
+                             :help "Use this to override the author"}}
+           :sections [{:fields [:title :slug :ingress :post :categories :author_id :source]}
                       {:name "Meta" :fields [:discussion_p :og_title :og_image :og_description]}]}}})
