@@ -1,7 +1,12 @@
 (ns reverie.modules.blog
-  (:require [ez-database.core :as db]
+  (:require [clojure.edn :as edn]
+            [ez-database.core :as db]
+            [ez-database.query :refer [optional clean swap]]
+            [honeysql.core :as sql]
+            [honeysql.helpers :as sql.helpers]
             [reverie.auth :as auth]
             [reverie.core :refer [defmodule]]
+            [reverie.modules.default :refer [get-order-query]]
             [yesql.core :refer [defqueries]]
             [vlad.core :as vlad]))
 
@@ -75,12 +80,46 @@
     (db/query! db {:delete-from :blog_post_history
                    :where [:= :draft_id id]})))
 
-(defn get-authors [{db :database initial :initial}]
-  (->> (db/query db {:select [:id :full_name]
-                     :from [:auth_user]
+(defn get-authors [{db :database}]
+  (->> (db/query db {:select [:u.id :u.full_name]
+                     :modifiers [:distinct]
+                     :from [[:auth_user :u]]
+                     :join [[:auth_user_role :ur] [:= :ur.user_id :u.id]
+                            [:auth_role :r] [:= :ur.role_id :r.id]]
+                     :where [:in :r.name ["admin" "staff"]]
                      :order-by [:full_name]})
        (map (fn [{:keys [id full_name]}]
               [full_name id]))))
+
+(defn query-post [{:keys [database database-name limit offset interface] :as params}]
+  (let [[title author source] (->> [:title :author :source]
+                                   (map params)
+                                   (map edn/read-string))
+        order (get-order-query interface params)]
+    (->> (-> {:select [:d.* [:a.full_name :author]]
+              :from [[:blog_draft :d]]
+              :join [[:auth_user :a] [:= :d.author_id :a.id]]
+              :offset offset
+              :limit limit
+              :order-by [order]}
+             (swap (or title author source)
+                   (sql.helpers/where [:and
+                                       (optional title (sql/raw (format "d.title ilike '%%%s%%'" title)))
+                                       (optional author [:= :d.author_id author])
+                                       (optional source (sql/raw (format "d.source ilike '%%%s%%'" source)))]))
+             (clean))
+         (db/query database database-name))))
+
+(def filter-post [{:name :title
+                   :type :text}
+                  {:name :author
+                   :type :dropdown
+                   :options (fn [data]
+                              (let [authors (get-authors data)]
+                                (into [["" ""]]
+                                      (map (fn [[full-name id]] [id full-name]) authors))))}
+                  {:name :source
+                   :type :text}])
 
 (defmodule reverie-blog
   {:name "Blog"
@@ -109,8 +148,14 @@
            :interface {:display {:title {:name "Title"
                                          :link? true
                                          :sort :t
-                                         :sort-name :id}}
-                       :default-order :id}
+                                         :sort-name :id}
+                                 :author {:name "Author"
+                                          :sort :a}
+                                 :source {:name "Source"
+                                          :sort :s}}
+                       :default-order [:id :desc]
+                       :filter filter-post
+                       :query query-post}
            :publishing {:publish? true
                         :publish-fn publish-fn
                         :unpublish-fn unpublish-fn
