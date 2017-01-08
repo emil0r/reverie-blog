@@ -5,7 +5,7 @@ blog module for reverie
 ## deps
 
 ```clojure
-[reverie-blog "0.3.0"]
+[reverie-blog "0.3.1"]
 ```
 ## Usage
 
