@@ -64,13 +64,13 @@
   [:ul.pagination
    [:li
     (if (nil? prev)
-      (t :reverie.blog.pagination/previous)
+      [:span (t :reverie.blog.pagination/previous)]
       [:a {:href (join-uri (page/path page) (str prev))}
        (t :reverie.blog.pagination/previous)])]
    [:li (t :reverie.blog.pagination/x-of-n p pages)]
    [:li
     (if (nil? next)
-      (t :reverie.blog.pagination/next)
+      [:span (t :reverie.blog.pagination/next)]
       [:a {:href (join-uri (page/path page) (str next))}
        (t :reverie.blog.pagination/next)])]])
 
@@ -96,7 +96,7 @@
     [:div.author (t :reverie.blog/by-author) [:span (->> [source author] (remove str/blank?) first)]]
     [:ul.categories
      [:li.categories (t :reverie.blog/categories)]
-     (map (partial category-link page) categories)]]
+     (map #(category-link page %) categories)]]
 
    [:div.body post]
 
@@ -105,14 +105,12 @@
 (defn present-index [{:keys [page latest categories params entries category css paginated]}]
   {:latest (list-latest page latest)
    :categories (list-categories page categories params)
-   :entries (if (str/blank? category)
-              (list-entries page css entries)
-              (list-entries page css entries))
+   :entries (list-entries page css entries)
    :pagination (pagination page paginated)})
 
 (defn index [request page properties {:keys [offset category] :as params}]
   (let [db (get-in request [:reverie :database])
-        pp 2
+        pp 20
         db-offset (* (- (or offset 1) 1) pp)
         categories (db/query db sql-list-categories)
         num-pages (->> sql-count-entries
@@ -127,7 +125,7 @@
      :params params
      :entries (if (str/blank? category)
                 (db/query db sql-list-entries {:offset db-offset :limit pp})
-                (db/query db sql-list-entries {:category category, :offset db-offset, :limit pp}))
+                (db/query db sql-list-entries-by-category {:category category, :offset db-offset, :limit pp}))
      :category category
      :css css
      :paginated paginated}))
