@@ -22,12 +22,25 @@
                              :rights ""
                              :generator "reverie/blog"}))
 
+(defn- get-url [url add]
+  (let [a? (str/ends-with? url "/")
+        b? (str/starts-with? add "/")]
+   (cond (and a? b?)
+         (str url (str/replace add #"^/" ""))
+
+         (and (not a?)
+              (not b?))
+         (str url "/" add)
+
+         :else
+         (str url add))))
+
 (defn get-id-tag [id]
   (format "tag:%s:%s"
           (get-in @feed-content [:tagging-entity])
           (uuid/v5 (get-in @feed-content [:id-key]) id)))
 
-(defn get-entry [blog-url {:keys [id title slug og_title og_description created updated author author_email]}]
+(defn get-entry [blog-url {:keys [id title slug og_title og_description og_image created updated author author_email source]}]
   [:entry
    [:link {:href (str blog-url slug)
            :type "text/html"
@@ -36,9 +49,15 @@
    [:id (get-id-tag id)]
    [:updated (f/unparse (f/formatters :date-time) updated)]
    [:published (f/unparse (f/formatters :date-time) created)]
-   [:author
-    [:name author]
-    [:email author_email]]
+   (if-not (str/blank? og_image)
+     [:media:thumbnail {:xmlns:media "http://search.yahoo.com/mrss/"
+                        :url (get-url blog-url og_image)}])
+   (if (str/blank? source)
+     [:author
+      [:name author]
+      [:email author_email]]
+     [:author
+      [:name source]])
    [:content og_description]])
 
 (defn feed [request page params]
