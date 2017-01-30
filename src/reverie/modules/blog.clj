@@ -163,18 +163,22 @@
                         :published?-fn published?-fn}
            :fields {:title {:name "Title"
                             :type :text
+                            :initial ""
                             :validation (vlad/attr [:title] (vlad/present))}
                     :slug {:name "Slug"
                            :type :slug
+                           :initial ""
                            :for :title
                            :validation (vlad/attr [:slug] (vlad/present))}
                     :ingress {:name "Ingress"
                               :type :richtext
+                              :initial ""
                               :inline? true
                               :validation (vlad/attr [:ingress] (vlad/present))
                               :help "Ingress is what will show up in the blog listings and is supposed to be a a short summary of the entire blog post"}
                     :post {:name "Post"
                            :type :richtext
+                           :initial ""
                            :inline? true
                            :validation (vlad/attr [:post] (vlad/present))
                            :help "Post is the main body of the blog post. This is where the entire post goes"}
@@ -184,12 +188,15 @@
                                    :help "Allow discussion field?"}
                     :og_title {:name "Open Graph title"
                                :type :text
+                               :initial ""
                                :help "Leave blank for title to be used"}
                     :og_image {:name "Open Graph image"
                                :type :image
+                               :initial ""
                                :help "Minimum size is 600x315 px. Recommended size is 1200x630 px. Aspect ratio should be 1.91:1"}
                     :og_description {:name "Open Graph description"
                                      :type :textarea
+                                     :initial ""
                                      :help "One or two sentences describing the post."}
                     :categories {:name "Categories"
                                  :type :m2m
