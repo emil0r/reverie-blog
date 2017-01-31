@@ -1,7 +1,7 @@
 --name: sql-blog-add-post!
-INSERT INTO blog_post
+INSERT INTO blog_post (id, og_image, og_title, og_description, title, slug, ingress, post, discussion_p, author_id, source, created, updated)
        SELECT
-                *, now() AS created, now() AS updated
+                id, og_image, og_title, og_description, title, slug, ingress, post, discussion_p, author_id, source, now() AS created, now() AS updated
        FROM
                 blog_draft
        WHERE
